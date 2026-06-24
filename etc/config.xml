@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <virevo>
+                <active>0</active>
+                <model>Virevo\Payment\Model\Virevo</model>
+                <title>Virement instantané (Virevo)</title>
+                <order_status>pending_payment</order_status>
+                <payment_action>order</payment_action>
+                <mode>test</mode>
+                <can_use_checkout>1</can_use_checkout>
+                <can_use_internal>0</can_use_internal>
+                <allowspecific>0</allowspecific>
+            </virevo>
+        </payment>
+    </default>
+</config>

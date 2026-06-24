@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment">
+            <group id="virevo" translate="label" type="text" sortOrder="700" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Virevo — virement instantané</label>
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Activer</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Titre</label>
+                </field>
+                <field id="mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Mode</label>
+                    <source_model>Virevo\Payment\Model\Config\Source\Mode</source_model>
+                </field>
+                <field id="test_api_key" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Clé API test</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="live_api_key" translate="label" type="obscure" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Clé API live</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                </field>
+                <field id="webhook_secret" translate="label comment" type="obscure" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Secret de webhook</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment>Secret « whsec_… » de Virevo → Développeurs. URL de webhook à y enregistrer : /virevo/standard/webhook</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

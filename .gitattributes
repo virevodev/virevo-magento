@@ -1,0 +1,8 @@
+* text=auto eol=lf
+
+# Exclut le dev du ZIP
+/bin export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/.gitattributes export-ignore
+/dist export-ignore
