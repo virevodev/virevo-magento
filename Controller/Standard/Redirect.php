@@ -55,6 +55,14 @@ class Redirect extends Action
             return $resultRedirect->setPath('checkout/cart');
         }
 
+        // Mémorise l'identifiant Virevo sur le paiement (nécessaire au remboursement).
+        $payment = $order->getPayment();
+        if ($payment && !empty($resp['id'])) {
+            $payment->setAdditionalInformation('virevo_payment_id', $resp['id']);
+            $payment->setLastTransId($resp['id']);
+            $order->save();
+        }
+
         return $resultRedirect->setUrl($resp['payment_url']);
     }
 }

@@ -18,9 +18,15 @@ class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
     protected $_canUseCheckout = true;
     protected $_canUseInternal = false;
     protected $_isInitializeNeeded = false;
+    protected $_canRefund = true;
+    protected $_canRefundInvoicePartial = true;
 
     /** @var \Magento\Framework\UrlInterface */
     private $urlBuilder;
+    /** @var \Virevo\Payment\Model\Config */
+    private $config;
+    /** @var \Virevo\Payment\Model\ApiClient */
+    private $api;
 
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -31,6 +37,8 @@ class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Framework\UrlInterface $urlBuilder,
+        \Virevo\Payment\Model\Config $config,
+        \Virevo\Payment\Model\ApiClient $api,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -48,11 +56,47 @@ class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
             $data
         );
         $this->urlBuilder = $urlBuilder;
+        $this->config = $config;
+        $this->api = $api;
     }
 
     /** Magento redirige le client ici après le placement de la commande. */
     public function getOrderPlaceRedirectUrl()
     {
         return $this->urlBuilder->getUrl('virevo/standard/redirect');
+    }
+
+    /**
+     * Remboursement en ligne (avoir Magento « Refund Online »). $amount est dans
+     * la devise de la commande (unités majeures). Pousse le remboursement à Virevo.
+     *
+     * @param \Magento\Payment\Model\InfoInterface $payment
+     * @param float                                 $amount
+     * @return $this
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    public function refund(\Magento\Payment\Model\InfoInterface $payment, $amount)
+    {
+        $order = $payment->getOrder();
+        $virevoId = $payment->getAdditionalInformation('virevo_payment_id');
+        if (!$virevoId) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('Identifiant de paiement Virevo introuvable sur cette commande.')
+            );
+        }
+
+        $resp = $this->api->refund(
+            $this->config->getApiKey($order->getStoreId()),
+            (int) round((float) $amount * 100),
+            $virevoId,
+            ''
+        );
+        if (null === $resp) {
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __('Le remboursement Virevo a échoué (non disponible en production pour le moment ?).')
+            );
+        }
+
+        return $this;
     }
 }
