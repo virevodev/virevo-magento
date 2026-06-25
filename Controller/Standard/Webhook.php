@@ -104,21 +104,43 @@ class Webhook implements ActionInterface, CsrfAwareActionInterface, HttpPostActi
         $order->save();
     }
 
+    /**
+     * Plusieurs v1 possibles pendant une rotation de secret (ancien + nouveau) :
+     * on accepte si l'un d'eux correspond.
+     */
     private function verifySignature($secret, $header, $body)
     {
         if (empty($secret) || empty($header)) {
             return false;
         }
-        $parts = [];
-        parse_str(str_replace(',', '&', $header), $parts);
-        if (empty($parts['t']) || empty($parts['v1'])) {
+        $t = null;
+        $sigs = [];
+        foreach (explode(',', $header) as $part) {
+            $kv = explode('=', $part, 2);
+            if (count($kv) !== 2) {
+                continue;
+            }
+            $k = trim($kv[0]);
+            $v = trim($kv[1]);
+            if ($k === 't') {
+                $t = (int) $v;
+            } elseif ($k === 'v1' && $v !== '') {
+                $sigs[] = $v;
+            }
+        }
+        if ($t === null || empty($sigs)) {
             return false;
         }
-        if (abs(time() - (int) $parts['t']) > self::TOLERANCE_SECONDS) {
+        if (abs(time() - $t) > self::TOLERANCE_SECONDS) {
             return false;
         }
-        $expected = hash_hmac('sha256', $parts['t'] . '.' . $body, $secret);
-        return hash_equals($expected, (string) $parts['v1']);
+        $expected = hash_hmac('sha256', $t . '.' . $body, $secret);
+        foreach ($sigs as $v1) {
+            if (hash_equals($expected, $v1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function json($code, array $data)
