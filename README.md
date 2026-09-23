@@ -43,10 +43,15 @@ bash bin/build-zip.sh   # → dist/virevo-magento-<version>.zip
 Release automatisée : un tag `vX.Y.Z` déclenche le workflow de release (ZIP joint).
 
 ## Référence API
-- Guide : https://virevo.fr/developpeurs.html
+- Guide : https://virevo.fr/developpeurs
 - OpenAPI : https://app.virevo.fr/docs
 
 ## Notes / à venir
+- **Limite connue (audit du 2026-09-22)** : seul `payment.succeeded` est traité.
+  `payment.failed`, `payment.canceled` et `payment.refunded` sont acquittés puis
+  ignorés, donc une commande dont le paiement échoue reste en attente
+  indéfiniment, et un remboursement fait depuis le tableau de bord Virevo
+  n'apparaît jamais dans la boutique. À corriger.
 - EUR uniquement.
 - Mode test : `POST /v1/payments/{id}/simulate` (ou la page de test hébergée)
   pour déclencher le webhook et valider de bout en bout.
