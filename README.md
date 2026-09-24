@@ -47,11 +47,13 @@ Release automatisée : un tag `vX.Y.Z` déclenche le workflow de release (ZIP jo
 - OpenAPI : https://app.virevo.fr/docs
 
 ## Notes / à venir
-- **Limite connue (audit du 2026-09-22)** : seul `payment.succeeded` est traité.
-  `payment.failed`, `payment.canceled` et `payment.refunded` sont acquittés puis
-  ignorés, donc une commande dont le paiement échoue reste en attente
-  indéfiniment, et un remboursement fait depuis le tableau de bord Virevo
-  n'apparaît jamais dans la boutique. À corriger.
+- **Les quatre événements sont traités** depuis la 0.4.0. Un paiement refusé,
+  annulé ou expiré annule la commande via `canCancel()`, ce qui restitue le
+  stock réservé. Un remboursement décidé chez Virevo est **tracé en commentaire
+  de commande, sans créer d'avoir** : un avoir Magento demande
+  `CreditmemoFactory` et `CreditmemoService`, et ce module n'a jamais tourné sur
+  une instance réelle. Mieux vaut un commentaire exact qu'une écriture
+  comptable jamais éprouvée. Le sens inverse, « Refund Online », fonctionne.
 - EUR uniquement.
 - Mode test : `POST /v1/payments/{id}/simulate` (ou la page de test hébergée)
   pour déclencher le webhook et valider de bout en bout.
