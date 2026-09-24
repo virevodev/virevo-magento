@@ -12,9 +12,10 @@
                 <field id="title" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Titre</label>
                 </field>
-                <field id="mode" translate="label" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                <field id="mode" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mode</label>
                     <source_model>Virevo\Payment\Model\Config\Source\Mode</source_model>
+                    <comment><![CDATA[En mode Test, les paiements sont fictifs : aucun argent n'est encaissé. La clé doit correspondre au mode (<code>vrv_test_</code> ou <code>vrv_live_</code>) ; sinon le moyen de paiement reste masqué au checkout.]]></comment>
                 </field>
                 <field id="test_api_key" translate="label" type="obscure" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Clé API test</label>

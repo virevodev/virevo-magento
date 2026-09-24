@@ -67,6 +67,31 @@ class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
     }
 
     /**
+     * Ne propose la méthode que si elle peut réellement aboutir.
+     *
+     * Sans cette garde, une boutique qui active Virevo mais oublie la clé
+     * affiche « Virement instantané » au checkout : le client le choisit, et se
+     * prend une erreur d'API après avoir placé sa commande. Le paiement le plus
+     * coûteux est celui qu'on laisse commencer alors qu'il ne peut pas finir.
+     *
+     * @param \Magento\Quote\Api\Data\CartInterface|null $quote
+     * @return bool
+     */
+    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    {
+        if (!parent::isAvailable($quote)) {
+            return false;
+        }
+
+        // L'euro seul : le virement instantané est un instrument de la zone euro.
+        if ($quote && $quote->getCurrency() && $quote->getCurrency()->getQuoteCurrencyCode() !== 'EUR') {
+            return false;
+        }
+
+        return $this->config->isUsable($quote ? $quote->getStoreId() : null);
+    }
+
+    /**
      * Remboursement en ligne (avoir Magento « Refund Online »). $amount est dans
      * la devise de la commande (unités majeures). Pousse le remboursement à Virevo.
      *

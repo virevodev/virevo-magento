@@ -49,4 +49,24 @@ class Config
         $value = $this->value('webhook_secret', $storeId);
         return $value ? $this->encryptor->decrypt($value) : '';
     }
+
+    /** Préfixe attendu de la clé, selon le mode actif. */
+    public function getExpectedKeyPrefix($storeId = null)
+    {
+        return $this->getMode($storeId) === 'live' ? 'vrv_live_' : 'vrv_test_';
+    }
+
+    /**
+     * La configuration permet-elle un paiement qui aboutit ?
+     *
+     * Une clé absente, ou une clé dont le préfixe contredit le mode, serait
+     * rejetée par l'API. Le savoir sans appel réseau permet de masquer le
+     * moyen de paiement au checkout plutôt que d'échouer après le clic.
+     */
+    public function isUsable($storeId = null)
+    {
+        $key = trim((string) $this->getApiKey($storeId));
+
+        return $key !== '' && strpos($key, $this->getExpectedKeyPrefix($storeId)) === 0;
+    }
 }
