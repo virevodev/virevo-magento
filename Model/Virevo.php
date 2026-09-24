@@ -74,10 +74,15 @@ class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
      * prend une erreur d'API après avoir placé sa commande. Le paiement le plus
      * coûteux est celui qu'on laisse commencer alors qu'il ne peut pas finir.
      *
+     * La signature reprend EXACTEMENT celle d'`AbstractMethod::isAvailable()`,
+     * type nullable explicite compris. Écrire `CartInterface $quote = null`
+     * fonctionne (PHP rend le type implicitement nullable) mais déclenche une
+     * dépréciation sur PHP 8.4, que Magento 2.4.8 accepte.
+     *
      * @param \Magento\Quote\Api\Data\CartInterface|null $quote
      * @return bool
      */
-    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function isAvailable(?\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         if (!parent::isAvailable($quote)) {
             return false;
