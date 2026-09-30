@@ -13,6 +13,13 @@ namespace Virevo\Payment\Model;
 
 class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
 {
+    /**
+     * Montant minimal d'un paiement Virevo, en centimes TTC. L'API refuse tout
+     * encaissement plus petit (AMOUNT_BELOW_MINIMUM). Même valeur que
+     * MIN_PAYMENT_CENTS côté Virevo : à modifier ensemble.
+     */
+    const MIN_AMOUNT_CENTS = 10000;
+
     protected $_code = 'virevo';
     protected $_isOffline = false;
     protected $_canUseCheckout = true;
@@ -90,6 +97,12 @@ class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
 
         // L'euro seul : le virement instantané est un instrument de la zone euro.
         if ($quote && $quote->getCurrency() && $quote->getCurrency()->getQuoteCurrencyCode() !== 'EUR') {
+            return false;
+        }
+
+        // Sous le minimum, l'API refuserait le paiement, alors que la commande
+        // serait déjà placée : on ne propose pas la méthode.
+        if ($quote && (int) round((float) $quote->getGrandTotal() * 100) < self::MIN_AMOUNT_CENTS) {
             return false;
         }
 
