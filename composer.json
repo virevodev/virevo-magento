@@ -3,7 +3,7 @@
     "description": "Virevo — paiement par virement instantané pour Magento 2 (Adobe Commerce / Open Source).",
     "type": "magento2-module",
     "license": "GPL-2.0-or-later",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "require": {
         "php": ">=7.4",
         "magento/framework": "*"

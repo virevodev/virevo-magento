@@ -47,7 +47,7 @@ Release automatisée : un tag `vX.Y.Z` déclenche le workflow de release (ZIP jo
 - OpenAPI : https://app.virevo.fr/docs
 
 ## Notes / à venir
-- **Montant minimal de 100 € TTC** depuis la 0.5.0 : sous ce montant, l'API
+- **Montant minimal de 1 € TTC** depuis la 0.5.1 (100 € en 0.5.0) : sous ce montant, l'API
   refuse le paiement, donc la méthode n'est pas proposée au checkout.
 - **Les quatre événements sont traités** depuis la 0.4.0. Un paiement refusé,
   annulé ou expiré annule la commande via `canCancel()`, ce qui restitue le
