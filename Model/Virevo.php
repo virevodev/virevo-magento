@@ -18,7 +18,7 @@ class Virevo extends \Magento\Payment\Model\Method\AbstractMethod
      * encaissement plus petit (AMOUNT_BELOW_MINIMUM). Même valeur que
      * MIN_PAYMENT_CENTS côté Virevo : à modifier ensemble.
      */
-    const MIN_AMOUNT_CENTS = 10000;
+    const MIN_AMOUNT_CENTS = 100;
 
     protected $_code = 'virevo';
     protected $_isOffline = false;
